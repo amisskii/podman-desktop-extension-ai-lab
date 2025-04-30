@@ -22,7 +22,7 @@
     "test:frontend": "vitest -c packages/frontend/vite.config.js run packages/frontend --passWithNoTests --coverage",
     "test:shared": "vitest run -r packages/shared --passWithNoTests --coverage",
     "test:unit": "pnpm run test:backend && pnpm run test:shared && pnpm run test:frontend",
-    "test:e2e": "cd tests/playwright && pnpm run test:e2e",
+    "test:e2e": "pnpm run build && cd tests/playwright && pnpm run test:e2e",
     "test:e2e:smoke": "cd tests/playwright && pnpm run test:e2e:smoke",
     "typecheck:shared": "tsc --noEmit --project packages/shared",
     "typecheck:frontend": "tsc --noEmit --project packages/frontend",

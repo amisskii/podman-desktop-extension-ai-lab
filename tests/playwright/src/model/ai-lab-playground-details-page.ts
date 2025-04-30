@@ -86,8 +86,7 @@ export class AILabPlaygroundDetailsPage extends AILabBasePage {
 
   async verifyMessage(): Promise<void> {
     await this.sendPromptButton.waitFor({ state: 'visible', timeout: 100_000 });
-    const chatMessage = this.conversationSectionLocator.getByLabel('assistant message');
-    console.log(chatMessage);
+    const chatMessage = this.conversationSectionLocator.getByLabel('Assistant message');
     await playExpect(chatMessage).toBeVisible();
   }
 }
