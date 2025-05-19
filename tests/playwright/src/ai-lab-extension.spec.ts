@@ -445,7 +445,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       );
       let recipesCatalogPage: AILabRecipesCatalogPage;
 
-      test(`Open Recipes Catalog`, async ({ runner, page, navigationBar }) => {
+      test(`Open Recipes Catalog ${appName}`, async ({ runner, page, navigationBar }) => {
         [page, webview] = await handleWebview(runner, page, navigationBar);
         aiLabPage = new AILabPage(page, webview);
         await aiLabPage.navigationBar.waitForLoad();
