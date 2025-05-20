@@ -437,7 +437,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
     });
   });
 
-  ['Audio to Text', 'ChatBot', 'Summarizer', 'Code Generation', 'RAG Chatbot'].forEach(appName => {
+  ['Audio to Text', 'ChatBot', 'Summarizer', 'Code Generation', 'RAG Chatbot', 'Function calling'].forEach(appName => {
     test.describe.serial(`AI Recipe installation`, () => {
       test.skip(
         !process.env.EXT_TEST_RAG_CHATBOT && appName === 'RAG Chatbot',
@@ -445,7 +445,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       );
       let recipesCatalogPage: AILabRecipesCatalogPage;
 
-      test.beforeEach(`Open Recipes Catalog`, async ({ runner, page, navigationBar }) => {
+      test(`Navigate to Recipes Catalog for ${appName}`, async ({ runner, page, navigationBar }) => {
         [page, webview] = await handleWebview(runner, page, navigationBar);
         aiLabPage = new AILabPage(page, webview);
         await aiLabPage.navigationBar.waitForLoad();
@@ -461,7 +461,43 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
         await demoApp.startNewDeployment();
       });
 
-      test.afterEach(`Stop ${appName} app`, async ({ navigationBar }) => {
+      /* eslint-disable sonarjs/no-nested-functions */
+      if (appName === 'Function calling') {
+        test(`Verify that model service for the ${appName} is working`, async ({ request }) => {
+          test.setTimeout(600_000);
+          const modelServicePage = await aiLabPage.navigationBar.openServices();
+          const serviceDetailsPage = await modelServicePage.openSercviceDetails(
+            'ibm-granite/granite-3.3-8b-instruct-GGUF',
+          );
+          await playExpect.poll(async () => await serviceDetailsPage.getServiceState()).toBe('RUNNING');
+          const port = await serviceDetailsPage.getInferenceServerPort();
+          const url = `http://localhost:${port}/v1/chat/completions`;
+
+          const response = await request.post(url, {
+            data: {
+              messages: [
+                {
+                  content: 'You are a helpful assistant.',
+                  role: 'system',
+                },
+                {
+                  content: 'What is the capital of Czech Republic?',
+                  role: 'user',
+                },
+              ],
+            },
+            timeout: 600_000,
+          });
+
+          playExpect(response.ok()).toBeTruthy();
+          const body = await response.body();
+          const text = body.toString();
+          playExpect(text).toContain('Prague');
+        });
+      }
+      /* eslint-enable sonarjs/no-nested-functions */
+
+      test(`Stop ${appName} app`, async ({ navigationBar }) => {
         test.setTimeout(150_000);
         await stopAndDeleteApp(appName);
         await cleanupServiceModels();
