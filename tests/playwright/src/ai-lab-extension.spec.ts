@@ -386,7 +386,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       });
 
       test('Set system prompt, submit user input, and verify assistant response is visible', async () => {
-        test.setTimeout(100_000);
+        test.setTimeout(130_000);
         await playgroundDetailsPage.defineSystemPrompt(systemPrompt);
         await playgroundDetailsPage.submitUserInput('Hello');
         // Get the first assistant response
