@@ -40,6 +40,9 @@ import {
   reopenAILabDashboard,
   waitForExtensionToInitialize,
 } from './utils/aiLabHandler';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const AI_LAB_EXTENSION_OCI_IMAGE =
   process.env.EXTENSION_OCI_IMAGE ?? 'ghcr.io/containers/podman-desktop-extension-ai-lab:nightly';
@@ -51,6 +54,10 @@ const runnerOptions = {
   customFolder: 'ai-lab-tests-pd',
   aiLabModelUploadDisabled: isWindows ? true : false,
 };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const TEST_AUDIO_FILE = path.resolve(__dirname, '..', '..', 'playwright', 'resources', `test-audio-to-text.wav`);
 
 test.use({
   runnerOptions: new RunnerOptions(runnerOptions),
@@ -535,6 +542,43 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
         const body = await response.body();
         const text = body.toString();
         playExpect(text).toContain('Prague');
+      });
+
+      test(`${appName} audio - text`, async ({ page, request }) => {
+        test.skip(appName !== 'Audio to Text');
+        test.setTimeout(600_000);
+        const audioFileContent = fs.readFileSync(TEST_AUDIO_FILE);
+
+        const modelServicePage = await aiLabPage.navigationBar.openServices();
+        const serviceDetailsPage = await modelServicePage.openServiceDetails('ggerganov/whisper.cpp');
+        await page.waitForTimeout(300_000);
+        await playExpect
+          // eslint-disable-next-line sonarjs/no-nested-functions
+          .poll(async () => await serviceDetailsPage.getServiceState(), { timeout: 600_000 })
+          .toBe('RUNNING');
+        const port = await serviceDetailsPage.getInferenceServerPort();
+        const url = `http://localhost:${port}/inference`;
+
+        const response = await request.post(url, {
+          headers: {
+            Accept: 'application/json',
+          },
+          multipart: {
+            file: {
+              name: 'test.wav',
+              mimeType: 'audio/wav',
+              buffer: audioFileContent,
+            },
+          },
+          timeout: 600_000,
+        });
+
+        playExpect(response.ok()).toBeTruthy();
+        const body = await response.body();
+        const text = body.toString();
+        playExpect(text).toContain(
+          'And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.',
+        );
       });
 
       test(`${appName}: Restart, Stop, Delete. Clean up model service`, async () => {
