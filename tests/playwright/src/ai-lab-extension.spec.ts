@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ***********************************************************************/
 
-import type { Locator } from '@playwright/test';
+import type { APIResponse, Locator } from '@playwright/test';
 import type { NavigationBar, ExtensionsPage } from '@podman-desktop/tests-playwright';
 import {
   expect as playExpect,
@@ -507,78 +507,70 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       });
 
       test(`Verify that model service for the ${appName} is working`, async ({ request }) => {
-        test.skip(appName !== 'Function calling');
+        test.skip(appName !== 'Function calling' && appName !== 'Audio to Text');
         test.setTimeout(600_000);
 
+        const aiAppModel =
+          appName === 'Audio to Text' ? 'ggerganov/whisper.cpp' : 'ibm-granite/granite-3.3-8b-instruct-GGUF';
+
         const modelServicePage = await aiLabPage.navigationBar.openServices();
-        const serviceDetailsPage = await modelServicePage.openServiceDetails(
-          'ibm-granite/granite-3.3-8b-instruct-GGUF',
-        );
+        const serviceDetailsPage = await modelServicePage.openServiceDetails(aiAppModel);
 
         await playExpect
           // eslint-disable-next-line sonarjs/no-nested-functions
           .poll(async () => await serviceDetailsPage.getServiceState(), { timeout: 60_000 })
           .toBe('RUNNING');
-        const port = await serviceDetailsPage.getInferenceServerPort();
-        const url = `http://localhost:${port}/v1/chat/completions`;
 
-        const response = await request.post(url, {
-          data: {
-            messages: [
-              {
-                content: 'You are a helpful assistant.',
-                role: 'system',
+        const port = await serviceDetailsPage.getInferenceServerPort();
+        const baseUrl = `http://localhost:${port}`;
+
+        let response: APIResponse;
+        let expectedResponse: string;
+
+        switch (aiAppModel) {
+          case 'ggerganov/whisper.cpp': {
+            expectedResponse =
+              'And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country';
+            const audioFileContent = fs.readFileSync(TEST_AUDIO_FILE);
+
+            response = await request.post(`${baseUrl}/inference`, {
+              headers: {
+                Accept: 'application/json',
               },
-              {
-                content: 'What is the capital of Czech Republic?',
-                role: 'user',
+              multipart: {
+                file: {
+                  name: 'test.wav',
+                  mimeType: 'audio/wav',
+                  buffer: audioFileContent,
+                },
               },
-            ],
-          },
-          timeout: 600_000,
-        });
+              timeout: 600_000,
+            });
+            break;
+          }
+
+          case 'ibm-granite/granite-3.3-8b-instruct-GGUF': {
+            expectedResponse = 'Prague';
+            response = await request.post(`${baseUrl}/v1/chat/completions`, {
+              data: {
+                messages: [
+                  { role: 'system', content: 'You are a helpful assistant.' },
+                  { role: 'user', content: 'What is the capital of Czech Republic?' },
+                ],
+              },
+              timeout: 600_000,
+            });
+            break;
+          }
+
+          default:
+            throw new Error(`Unhandled model type: ${aiAppModel}`);
+        }
 
         playExpect(response.ok()).toBeTruthy();
         const body = await response.body();
         const text = body.toString();
-        playExpect(text).toContain('Prague');
-      });
-
-      test(`${appName} audio - text`, async ({ page, request }) => {
-        test.skip(appName !== 'Audio to Text');
-        test.setTimeout(600_000);
-        const audioFileContent = fs.readFileSync(TEST_AUDIO_FILE);
-
-        const modelServicePage = await aiLabPage.navigationBar.openServices();
-        const serviceDetailsPage = await modelServicePage.openServiceDetails('ggerganov/whisper.cpp');
-        await page.waitForTimeout(300_000);
-        await playExpect
-          // eslint-disable-next-line sonarjs/no-nested-functions
-          .poll(async () => await serviceDetailsPage.getServiceState(), { timeout: 600_000 })
-          .toBe('RUNNING');
-        const port = await serviceDetailsPage.getInferenceServerPort();
-        const url = `http://localhost:${port}/inference`;
-
-        const response = await request.post(url, {
-          headers: {
-            Accept: 'application/json',
-          },
-          multipart: {
-            file: {
-              name: 'test.wav',
-              mimeType: 'audio/wav',
-              buffer: audioFileContent,
-            },
-          },
-          timeout: 600_000,
-        });
-
-        playExpect(response.ok()).toBeTruthy();
-        const body = await response.body();
-        const text = body.toString();
-        playExpect(text).toContain(
-          'And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.',
-        );
+        playExpect(text).toContain(expectedResponse);
       });
 
       test(`${appName}: Restart, Stop, Delete. Clean up model service`, async () => {
