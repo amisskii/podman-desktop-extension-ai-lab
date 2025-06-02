@@ -55,6 +55,20 @@ const runnerOptions = {
   aiLabModelUploadDisabled: isWindows ? true : false,
 };
 
+interface AiApp {
+  appName: string;
+  appModel: string;
+}
+
+const AI_APPS: AiApp[] = [
+  { appName: 'Audio to Text', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+  { appName: 'ChatBot', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+  { appName: 'Summarizer', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+  { appName: 'Code Generation', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+  { appName: 'RAG Chatbot', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+  { appName: 'Function calling', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+];
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const TEST_AUDIO_FILE = path.resolve(__dirname, '..', '..', 'playwright', 'resources', `test-audio-to-text.wav`);
@@ -483,7 +497,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
     });
   });
 
-  ['Audio to Text', 'ChatBot', 'Summarizer', 'Code Generation', 'RAG Chatbot', 'Function calling'].forEach(appName => {
+  AI_APPS.forEach(({ appName, appModel: model }) => {
     test.describe.serial(`AI Recipe installation`, () => {
       test.skip(
         !process.env.EXT_TEST_RAG_CHATBOT && appName === 'RAG Chatbot',
@@ -512,11 +526,8 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
         test.fail(appName === 'Audio to Text');
         test.setTimeout(600_000);
 
-        const aiAppModel =
-          appName === 'Audio to Text' ? 'ggerganov/whisper.cpp' : 'ibm-granite/granite-3.3-8b-instruct-GGUF';
-
         const modelServicePage = await aiLabPage.navigationBar.openServices();
-        const serviceDetailsPage = await modelServicePage.openServiceDetails(aiAppModel);
+        const serviceDetailsPage = await modelServicePage.openServiceDetails(model);
 
         await playExpect
           // eslint-disable-next-line sonarjs/no-nested-functions
@@ -529,7 +540,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
         let response: APIResponse;
         let expectedResponse: string;
 
-        switch (aiAppModel) {
+        switch (model) {
           case 'ggerganov/whisper.cpp': {
             expectedResponse =
               'And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country';
@@ -566,7 +577,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
           }
 
           default:
-            throw new Error(`Unhandled model type: ${aiAppModel}`);
+            throw new Error(`Unhandled model type: ${model}`);
         }
 
         playExpect(response.ok()).toBeTruthy();
