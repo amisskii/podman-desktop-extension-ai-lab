@@ -508,6 +508,8 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
 
       test(`Verify that model service for the ${appName} is working`, async ({ request }) => {
         test.skip(appName !== 'Function calling' && appName !== 'Audio to Text');
+        // Marking this test as expected to fail for the Audio to Text app due to issue: https://github.com/containers/podman-desktop-extension-ai-lab/issues/3111
+        test.fail(appName === 'Audio to Text');
         test.setTimeout(600_000);
 
         const aiAppModel =
