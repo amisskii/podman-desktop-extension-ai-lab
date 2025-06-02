@@ -497,7 +497,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
     });
   });
 
-  AI_APPS.forEach(({ appName, appModel: model }) => {
+  AI_APPS.forEach(({ appName, appModel }) => {
     test.describe.serial(`AI Recipe installation`, () => {
       test.skip(
         !process.env.EXT_TEST_RAG_CHATBOT && appName === 'RAG Chatbot',
@@ -527,7 +527,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
         test.setTimeout(600_000);
 
         const modelServicePage = await aiLabPage.navigationBar.openServices();
-        const serviceDetailsPage = await modelServicePage.openServiceDetails(model);
+        const serviceDetailsPage = await modelServicePage.openServiceDetails(appModel);
 
         await playExpect
           // eslint-disable-next-line sonarjs/no-nested-functions
@@ -540,7 +540,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
         let response: APIResponse;
         let expectedResponse: string;
 
-        switch (model) {
+        switch (appModel) {
           case 'ggerganov/whisper.cpp': {
             expectedResponse =
               'And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country';
@@ -577,7 +577,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
           }
 
           default:
-            throw new Error(`Unhandled model type: ${model}`);
+            throw new Error(`Unhandled model type: ${appModel}`);
         }
 
         playExpect(response.ok()).toBeTruthy();
