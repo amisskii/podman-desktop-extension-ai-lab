@@ -61,7 +61,7 @@ interface AiApp {
 }
 
 const AI_APPS: AiApp[] = [
-  { appName: 'Audio to Text', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
+  { appName: 'Audio to Text', appModel: 'ggerganov/whisper.cpp' },
   { appName: 'ChatBot', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
   { appName: 'Summarizer', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
   { appName: 'Code Generation', appModel: 'ibm-granite/granite-3.3-8b-instruct-GGUF' },
