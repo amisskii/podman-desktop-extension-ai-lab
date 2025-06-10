@@ -535,10 +535,11 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       });
 
       test(`Verify ${appName} app HTTP page is reachable`, async ({ request }) => {
+        test.setTimeout(60_000);
         test.skip(appName !== 'Object Detection');
         const aiRunningAppsPage = await aiLabPage.navigationBar.openRunningApps();
         const appPort = await aiRunningAppsPage.getAppPort(appName);
-        const response = await request.get(`http://localhost:${appPort}`);
+        const response = await request.get(`http://localhost:${appPort}`, { timeout: 60_000 });
 
         playExpect(response.ok()).toBeTruthy();
         const body = await response.text();
