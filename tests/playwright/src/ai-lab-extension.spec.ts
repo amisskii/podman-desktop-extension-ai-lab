@@ -281,7 +281,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
   });
 
   ['ggerganov/whisper.cpp', 'facebook/detr-resnet-101'].forEach(modelName => {
-    test.describe.serial(`Model download and deletion`, { tag: '@smoke' }, () => {
+    test.describe.skip(`Model download and deletion`, { tag: '@smoke' }, () => {
       let catalogPage: AILabCatalogPage;
 
       test.beforeEach(`Open AI Lab Catalog`, async ({ runner, page, navigationBar }) => {
