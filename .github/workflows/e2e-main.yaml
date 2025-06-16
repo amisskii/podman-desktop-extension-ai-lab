@@ -127,6 +127,9 @@ jobs:
         working-directory: ./podman-desktop-extension-ai-lab
         run: pnpm install
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Run All E2E tests
         working-directory: ./podman-desktop-extension-ai-lab
         env:
