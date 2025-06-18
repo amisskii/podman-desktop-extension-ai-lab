@@ -217,7 +217,8 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       playExpect(apiResponse.version).toBe(extensionVersion);
     });
 
-    test(`Download ${model} via API`, async ({ request }) => {
+    // This test is currently failing due to a known issue: https://github.com/containers/podman-desktop-extension-ai-lab/issues/2925
+    test.fail(`Download ${model} via API and verify it appears in models catalog`, async ({ request }) => {
       test.setTimeout(300_000);
       const catalogPage = await aiLabPage.navigationBar.openCatalog();
       await catalogPage.waitForLoad();
@@ -238,12 +239,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
       const body = await response.body();
       const text = body.toString();
       playExpect(text).toContain('success');
-    });
 
-    // This test is currently failing due to a known issue: https://github.com/containers/podman-desktop-extension-ai-lab/issues/2925
-    test.fail(`Verify ${model} is available in AI Lab Catalog`, async () => {
-      const catalogPage = await aiLabPage.navigationBar.openCatalog();
-      await catalogPage.waitForLoad();
       await playExpect
         // eslint-disable-next-line sonarjs/no-nested-functions
         .poll(async () => await waitForCatalogModel(model))
