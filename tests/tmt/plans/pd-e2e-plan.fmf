@@ -37,6 +37,7 @@ provision:
 
 environment:
   SKIP_COMPOSE_ONBOARDING_TEST: true
+  PODMAN_DESKTOP_ARGS: /$TMT_TREE/podman-desktop
 
 
 prepare:
