@@ -65,6 +65,18 @@ prepare:
       systemctl --user start podman.socket || exit 1
       systemctl --user is-active podman.socket || exit 1
 
+  - name: Clone Podman Desktop repository
+    how: shell
+    script: | 
+      git clone -b main https://github.com/podman-desktop/podman-desktop.git /$TMT_TREE/podman-desktop
+
+  - name: Build podman Desktop for E2E tests
+    how: shell
+    script: | 
+      cd $TMT_TREE/podman-desktop 
+      pnpm install 
+      pnpm test:e2e:build
+
 /e2e: 
   summary: Execute all Playwright E2E tests, excluding those related to Kubernetes.
   discover+: 
