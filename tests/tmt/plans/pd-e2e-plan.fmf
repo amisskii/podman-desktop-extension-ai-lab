@@ -36,7 +36,7 @@ provision:
       - size: ">= 20 GB"
 
 environment:
-  PODMAN_DESKTOP_ARGS: /$TMT_TREE/podman-desktop
+  PODMAN_DESKTOP_ARGS: ~/podman-desktop
   EXTENSION_PREINSTALLED: true
 
 
@@ -69,12 +69,12 @@ prepare:
   - name: Clone Podman Desktop repository
     how: shell
     script: | 
-      git clone -b main https://github.com/podman-desktop/podman-desktop.git /$TMT_TREE/podman-desktop
+      git clone -b main https://github.com/podman-desktop/podman-desktop.git ~/podman-desktop
 
   - name: Build podman Desktop for E2E tests
     how: shell
     script: | 
-      cd $TMT_TREE/podman-desktop 
+      cd ~/podman-desktop 
       pnpm install 
       pnpm test:e2e:build
 
