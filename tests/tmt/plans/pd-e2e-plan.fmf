@@ -36,8 +36,8 @@ provision:
       - size: ">= 20 GB"
 
 environment:
-  SKIP_COMPOSE_ONBOARDING_TEST: true
   PODMAN_DESKTOP_ARGS: /$TMT_TREE/podman-desktop
+  EXTENSION_PREINSTALLED: true
 
 
 prepare:
