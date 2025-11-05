@@ -75,7 +75,7 @@ prepare:
     how: shell
     script: | 
       cd ~/podman-desktop 
-      pnpm install 
+      pnpm install --frozen-lockfile
       pnpm test:e2e:build
       cd $TMT_TREE
 
