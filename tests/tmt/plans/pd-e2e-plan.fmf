@@ -37,6 +37,7 @@ provision:
 
 environment:
   EXTENSION_PREINSTALLED: true
+  PODMAN_DESKTOP_BINARY: $TMT_TREE/tests/tmt/scripts/podman-desktop-binary/podman-desktop
 
 prepare:
   - name: Install required packages
@@ -68,7 +69,6 @@ prepare:
     how: shell
     script: | 
       bash $TMT_TREE/tests/tmt/scripts/install-podman-desktop-binary.sh
-      export PODMAN_DESKTOP_BINARY=$TMT_TREE/tests/tmt/scripts/podman-desktop-binary/podman-desktop
 
 /e2e: 
   summary: Execute all Playwright E2E tests, excluding those related to Kubernetes.
