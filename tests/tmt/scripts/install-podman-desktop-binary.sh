@@ -25,19 +25,20 @@ echo "TESTTTTT"
 TAG=$(curl -s -H "Accept: application/vnd.github+json" \
      -H "Authorization: Bearer ${GITHUB_TOKEN}" \
      https://api.github.com/repos/podman-desktop/prereleases/releases \
-  | jq -r '.[0].tag_name')
+  | jq -r '.[0].tag_name' | sed 's/^v//')
+
 
 echo "Latest tag: ${TAG}"
 
 # Download the latest tar.gz asset
 curl -L -o podman-desktop.tar.gz \
-  "https://github.com/podman-desktop/prereleases/releases/download/$TAG/podman-desktop-${TAG#v}.tar.gz"
+  "https://github.com/podman-desktop/prereleases/releases/download/v$TAG/podman-desktop-$TAG.tar.gz"
 
 ls
 
 # Extract it
 mkdir -p podman-desktop-binary
-tar -zxvf podman-desktop.tar.gz -C podman-desktop-binary
+tar -zxvf podman-desktop.tar.gz -C podman-desktop-binary --strip-components=1
 
 echo "Extraction complete"
 pwd
