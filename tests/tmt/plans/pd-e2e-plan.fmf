@@ -36,7 +36,7 @@ provision:
       - size: ">= 20 GB"
 
 environment:
-  PODMAN_DESKTOP_BINARY: $TMT_TREE/tests/tmt/scripts/podman-desktop-binary/podman-desktop
+  PODMAN_DESKTOP_BINARY: $TMT_TREE/podman-desktop-binary/podman-desktop
 
 prepare:
   - name: Install required packages
