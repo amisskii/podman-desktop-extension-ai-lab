@@ -19,6 +19,7 @@
 #!/bin/bash
 set -euo pipefail
 
+echo "TESTTTTT"
 # Get the latest preleases tag 
 TAG=$(curl -s -H "Accept: application/vnd.github+json" \
      -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -27,6 +28,7 @@ TAG=$(curl -s -H "Accept: application/vnd.github+json" \
 
 # Download the latest tar.gz asset
 curl -L -o podman-desktop.tar.gz 'https://github.com/podman-desktop/prereleases/releases/download/$TAG/podman-desktop-$TAG.tar.gz'
+mkdir podman-desktop-binary
 tar -zxvf -C podman-desktop.tar.gz ./podman-desktop-binary
 echo "TESTTTTT"
 pwd
