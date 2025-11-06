@@ -68,7 +68,7 @@ prepare:
     how: shell
     script: | 
       bash $TMT_TREE/tests/tmt/scripts/install-podman-desktop-binary.sh
-      PODMAN_DESKTOP_BINARY=$TMT_TREE/tests/tmt/scripts/podman-desktop-binary/podman-desktop
+      export PODMAN_DESKTOP_BINARY=$TMT_TREE/tests/tmt/scripts/podman-desktop-binary/podman-desktop
 
 /e2e: 
   summary: Execute all Playwright E2E tests, excluding those related to Kubernetes.
