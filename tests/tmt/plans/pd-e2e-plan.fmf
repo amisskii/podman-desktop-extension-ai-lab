@@ -66,18 +66,21 @@ prepare:
       systemctl --user start podman.socket || exit 1
       systemctl --user is-active podman.socket || exit 1
 
-  - name: Clone Podman Desktop repository
+  - name: Build ai lab extension 
     how: shell
     script: | 
-      git clone -b main https://github.com/podman-desktop/podman-desktop.git ~/podman-desktop
+      podman build -t local_ai_lab_image ./
+      CONTAINER_ID=$(podman create localhost/local_ai_lab_image --entrypoint "")
+      mkdir -p tests/playwright/tests/playwright/output/ai-lab-tests-pd/plugins
+      podman export $CONTAINER_ID | tar -x -C tests/playwright/tests/playwright/output/ai-lab-tests-pd/plugins/
+      podman rm -f $CONTAINER_ID
+      podman rmi -f localhost/local_ai_lab_image:latest
 
-  - name: Build podman Desktop for E2E tests
+  - name: Dowload podman-desktop-binary set the path to it
     how: shell
     script: | 
-      cd ~/podman-desktop 
-      pnpm install --frozen-lockfile
-      pnpm test:e2e:build
-      cd $TMT_TREE
+      bash $TMT_TREE/tests/tmt/scripts/install-podman-desktop-binary.sh
+      PODMAN_DESKTOP_BINARY=$TMT_TREE/tests/tmt/scripts/podman-desktop-binary/podman-desktop
 
 /e2e: 
   summary: Execute all Playwright E2E tests, excluding those related to Kubernetes.

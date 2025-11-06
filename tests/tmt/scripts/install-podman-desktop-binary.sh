@@ -16,17 +16,15 @@
 #  SPDX-License-Identifier: Apache-2.0
 #  ***********************************************************************/
 
-summary: Execute smoke Playwright end-to-end tests.
-tag:
-  - smoke
-duration: 2h
-result: custom
-framework: shell
-test: |
-  set +e
-  cd $TMT_TREE 
-  pnpm install
-  pnpm build
-  pnpm test:e2e:smoke
-  EXIT_CODE=$?
-  bash "$TMT_TREE/tests/tmt/scripts/create-results.sh" "$EXIT_CODE" "smoke"
+#!/bin/bash
+set -euo pipefail
+
+# Get the latest preleases tag 
+TAG=$(curl -s -H "Accept: application/vnd.github+json" \
+     -H "Authorization: Bearer $GH_TOKEN" \
+     https://api.github.com/repos/podman-desktop/prereleases/releases \
+  | jq -r '.[1].tag_name')
+
+# Download the latest tar.gz asset
+curl -L -o podman-desktop.tar.gz 'https://github.com/podman-desktop/prereleases/releases/download/$TAG/podman-desktop-$TAG.tar.gz'
+tar -zxvf -C podman-desktop.tar.gz ./podman-desktop-binary
