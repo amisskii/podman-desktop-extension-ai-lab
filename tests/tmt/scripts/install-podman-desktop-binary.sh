@@ -27,7 +27,7 @@ echo "TESTTTTT"
 TAG=$(curl -s -H "Accept: application/vnd.github+json" \
      -H "Authorization: Bearer ${GITHUB_TOKEN}" \
      https://api.github.com/repos/podman-desktop/prereleases/releases \
-  | jq -r '.[0].tag_name')
+  | jq -r '.[1].tag_name')
 
 echo "Latest tag: ${TAG}"
 
