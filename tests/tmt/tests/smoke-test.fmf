@@ -27,6 +27,12 @@ test: |
   cd $TMT_TREE 
   pnpm install
   pnpm build
+  podman build -t local_ai_lab_image ./
+  CONTAINER_ID=$(podman create localhost/local_ai_lab_image --entrypoint "")
+  mkdir -p tests/playwright/tests/playwright/output/ai-lab-tests-pd/plugins
+  podman export $CONTAINER_ID | tar -x -C tests/playwright/tests/playwright/output/ai-lab-tests-pd/plugins/
+  podman rm -f $CONTAINER_ID
+  podman rmi -f localhost/local_ai_lab_image:latest
   pnpm test:e2e:smoke
   EXIT_CODE=$?
   bash "$TMT_TREE/tests/tmt/scripts/create-results.sh" "$EXIT_CODE" "smoke"
