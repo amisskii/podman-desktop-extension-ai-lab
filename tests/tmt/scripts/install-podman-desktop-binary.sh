@@ -35,6 +35,8 @@ echo "Latest tag: ${TAG}"
 curl -L -o podman-desktop.tar.gz \
   "https://github.com/podman-desktop/prereleases/releases/download/${TAG}/podman-desktop-${TAG}.tar.gz"
 
+ls
+
 # Extract it
 mkdir -p podman-desktop-binary
 tar -zxvf podman-desktop.tar.gz -C podman-desktop-binary
