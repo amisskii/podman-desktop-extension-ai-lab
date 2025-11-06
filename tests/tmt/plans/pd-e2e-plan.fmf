@@ -36,9 +36,7 @@ provision:
       - size: ">= 20 GB"
 
 environment:
-  PODMAN_DESKTOP_ARGS: ~/podman-desktop
   EXTENSION_PREINSTALLED: true
-
 
 prepare:
   - name: Install required packages
