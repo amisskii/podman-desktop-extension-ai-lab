@@ -43,3 +43,4 @@ tar -zxvf podman-desktop.tar.gz -C podman-desktop-binary --strip-components=1
 echo "Extraction complete"
 pwd
 ls -al podman-desktop-binary
+chmod +X podman-desktop-binary/podman-desktop
