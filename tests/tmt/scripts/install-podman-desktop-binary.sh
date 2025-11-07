@@ -40,11 +40,6 @@ ls
 mkdir -p podman-desktop-binary
 tar -zxvf podman-desktop.tar.gz -C podman-desktop-binary --strip-components=1
 
-if [ -f "podman-desktop" ]; then
-    echo "Relocating 'podman-desktop' binary to expected folder."
-    mv podman-desktop podman-desktop-binary/
-fi
-
 echo "Extraction complete"
 pwd
 ls -al podman-desktop-binary
