@@ -17,7 +17,7 @@
 #  ***********************************************************************/
 
 summary: | 
-  This plan provisions a test environment for running Playwright end-to-end tests against the Podman Desktop application. 
+  This plan provisions a test environment for running Playwright E2E tests for the Podman Desktop AI Lab extension.
   It installs all required system dependencies, including GUI libraries, 
   sets up Node.js with pnpm, and starts Podman rootless service.
 
