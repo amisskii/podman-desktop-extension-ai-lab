@@ -28,7 +28,7 @@ test: |
   echo 'TESTTTT'
   ls $TMT_TREE
   ls $TMT_TREE/podman-desktop-binary/
-  export PODMAN_DESKTOP_BINARY=$TMT_TREE/podman-desktop-binary/podman-desktop
+  export PODMAN_DESKTOP_BINARY=$TMT_TREE/tests/podman-desktop-binary/podman-desktop
   pnpm install --no-frozen-lockfile
   pnpm build
   pnpm test:e2e:smoke

@@ -37,10 +37,11 @@ curl -L -o podman-desktop.tar.gz \
 ls
 
 # Extract it
-mkdir -p podman-desktop-binary
-tar -zxvf podman-desktop.tar.gz -C podman-desktop-binary --strip-components=1
+mkdir -p tests/podman-desktop-binary
+tar -zxvf podman-desktop.tar.gz -C tests/podman-desktop-binary --strip-components=1
 
 echo "Extraction complete"
 pwd
 ls 
-ls podman-desktop-binary
+ls tests
+ls tests/podman-desktop-binary
