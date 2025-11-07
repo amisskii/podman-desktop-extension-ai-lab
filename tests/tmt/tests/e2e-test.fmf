@@ -26,13 +26,19 @@ test: |
   set +e
 
   git clone https://github.com/podman-desktop/podman-desktop "$TMT_TREE/podman-desktop"
-  pnpm --prefix "$TMT_TREE/podman-desktop" install
-  pnpm --prefix "$TMT_TREE/podman-desktop" build
   export PODMAN_DESKTOP_ARGS="$TMT_TREE/podman-desktop"
+  (
+    cd "$PODMAN_DESKTOP_ARGS"
+    pnpm install
+    pnpm build
+  )
 
-  pnpm --prefix "$TMT_TREE" install
-  pnpm --prefix "$TMT_TREE" build
-  pnpm --prefix "$TMT_TREE" test:e2e
+  (
+    cd "$TMT_TREE"
+    pnpm install
+    pnpm build
+    pnpm test:e2e:e2e
+  )
   
   EXIT_CODE=$?
-  bash "$TMT_TREE/tests/tmt/scripts/create-results.sh" "$EXIT_CODE" "smoke"
+  bash "$TMT_TREE/tests/tmt/scripts/create-results.sh" "$EXIT_CODE" "e2e"
