@@ -25,15 +25,15 @@ framework: shell
 test: |
   set +e
   cd $TMT_TREE 
-  bash $TMT_TREE/tests/tmt/scripts/install-podman-desktop-binary.sh
-  echo 'TESTTTT'
-  ls $TMT_TREE
-  echo '-------'
-  ls $TMT_TREE/tests
-  echo '----------'
-  ls $TMT_TREE/tests/podman-desktop-binary/
-  export PODMAN_DESKTOP_BINARY=$TMT_TREE/tests/podman-desktop-binary/podman-desktop
-  pnpm install --no-frozen-lockfile
+
+  git clone https://github.com/podman-desktop/podman-desktop podman-desktop
+  cd podman-desktop
+  pnpm install
+  pnpm build
+  export PODMAN_DESKTOP_ARGS=$TMT_TREE/podman-desktop
+
+  cd $TMT_TREE
+  pnpm install 
   pnpm build
   pnpm test:e2e:smoke
   EXIT_CODE=$?
