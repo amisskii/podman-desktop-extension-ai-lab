@@ -37,7 +37,7 @@ test: |
     cd "$TMT_TREE"
     pnpm install
     pnpm build
-    pnpm test:e2e:e2e
+    pnpm test:e2e
   )
   
   EXIT_CODE=$?
