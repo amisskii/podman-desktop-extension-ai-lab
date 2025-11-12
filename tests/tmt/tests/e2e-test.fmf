@@ -34,6 +34,11 @@ test: |
   )
 
   (
+    cd "$TMT_TREE/tests/playwright"
+    pnpm add -D @podman-desktop/tests-playwright@next
+  )
+
+  (
     cd "$TMT_TREE"
     pnpm install
     pnpm build
