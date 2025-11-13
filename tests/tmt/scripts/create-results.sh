@@ -19,12 +19,13 @@
 #!/bin/bash
 set -euo pipefail
 
-OUTPUT_DIR="$TMT_TREE/tests/playwright/output/"
+PLAYWRIGHT_JUNIT_DIR="$TMT_TREE/tests/playwright/output/"
+PLAYWRIGHT_TRACE_VIDEOS_DIR="$TMT_TREE/tests/playwright/tests/playwright/output/"
 
 cd "$TMT_TEST_DATA"
 
-if [ -f "$OUTPUT_DIR/junit-results.xml" ]; then
-  cp "$OUTPUT_DIR/junit-results.xml" .
+if [ -f "$PLAYWRIGHT_JUNIT_DIR/junit-results.xml" ]; then
+  cp "$PLAYWRIGHT_JUNIT_DIR/junit-results.xml" .
 else
   echo "Error: junit-results.xml not found"
   exit 1
@@ -43,14 +44,14 @@ EOF
 
 elif [ "$1" -eq 255 ]; then
 
-  if [ -d "$OUTPUT_DIR/traces" ]; then
-    cp -r "$OUTPUT_DIR/traces" .
+  if [ -d "$PLAYWRIGHT_TRACE_VIDEOS_DIR/traces" ]; then
+    cp -r "$PLAYWRIGHT_TRACE_VIDEOS_DIR/traces" .
   else
     echo "Warning: traces directory does not exist" >&2
   fi
 
-  if [ -d "$OUTPUT_DIR/videos" ]; then 
-    cp -r "$OUTPUT_DIR/videos" .
+  if [ -d "$PLAYWRIGHT_TRACE_VIDEOS_DIR/videos" ]; then 
+    cp -r "$PLAYWRIGHT_TRACE_VIDEOS_DIR/videos" .
   else
     echo "Warning: videos directory does not exist" >&2
   fi
