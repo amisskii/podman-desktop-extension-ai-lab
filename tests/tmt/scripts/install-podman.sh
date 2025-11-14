@@ -26,9 +26,7 @@ sudo dnf remove -y podman
 COMPOSE_VERSION="fc$(echo "$COMPOSE" | cut -d'-' -f2)"
 
 # Install Podman based on the requested version:
-#   - "nightly": latest nightly build from rhcontainerbot/podman-next COPR repository
-#   - "latest": latest stable release from official Fedora repositories
-#   - other: install the exact RPM from Fedora Koji
+# "nightly": latest nightly build from rhcontainerbot/podman-next COPR repository
 if [[ "$PODMAN_VERSION" == "nightly" ]]; then
     sudo dnf copr enable -y rhcontainerbot/podman-next
     sudo dnf install -y podman --disablerepo=testing-farm-tag-repository 
@@ -42,6 +40,15 @@ else
     fi
     CUSTOM_PODMAN_URL="https://kojipkgs.fedoraproject.org//packages/podman/${PODMAN_VERSION}/1.${COMPOSE_VERSION}/${ARCH}/podman-${PODMAN_VERSION}-1.${COMPOSE_VERSION}.${ARCH}.rpm"
     curl -Lo podman.rpm "$CUSTOM_PODMAN_URL"
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to download Podman RPM from $CUSTOM_PODMAN_URL"
+        exit 1
+    fi
+    if [[ ! -s podman.rpm ]]; then
+        echo "Error: Downloaded Podman RPM file is missing or empty."
+        rm -f podman.rpm
+        exit 1
+    fi
     sudo dnf install -y ./podman.rpm
     rm -f podman.rpm
 fi
