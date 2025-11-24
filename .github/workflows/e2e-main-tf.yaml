@@ -47,6 +47,7 @@ jobs:
   pd-ai-lab-e2e-testing-farm:
     name: pd-e2e-testing-farm-ci
     runs-on: ubuntu-latest
+    timeout-minutes: ${{ (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.plans != 'gpu')) && 90 || 180 }}
     strategy:
       fail-fast: false
       matrix:

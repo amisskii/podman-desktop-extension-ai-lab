@@ -38,6 +38,9 @@ provision:
     disk:
       - size: ">= 20 GB"
 
+environment: 
+  EXT_TEST_GPU_SUPPORT_ENABLED: true
+
 prepare:
   - name: Install required packages
     how: shell
