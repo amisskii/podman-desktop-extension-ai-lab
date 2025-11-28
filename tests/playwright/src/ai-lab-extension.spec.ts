@@ -148,7 +148,7 @@ test.afterAll(async ({ runner }) => {
 });
 
 test.describe.serial(`AI Lab extension installation and verification`, () => {
-  test.describe.serial(`AI Lab extension installation`, { tag: ['@smoke', '@instructLab'] }, () => {
+  test.describe.serial(`AI Lab extension installation`, { tag: ['@test', '@smoke', '@instructLab'] }, () => {
     let extensionsPage: ExtensionsPage;
 
     test(`Open Settings -> Extensions page`, async ({ navigationBar }) => {
