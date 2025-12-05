@@ -475,16 +475,34 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
             }
           });
 
-          test(`Verify that model service for the ${appName} is working`, async ({ request }) => {
-            test.setTimeout(600_000);
+          test(`${appName} service status and inference type validation`, async () => {
+            test.setTimeout(60_000);
             test.fail(
               appName === 'Audio to Text',
               'Expected failure due to issue #3111: https://github.com/containers/podman-desktop-extension-ai-lab/issues/3111',
             );
-            test.skip(
-              appName === 'Object Detection' && isCI && !isMac,
-              'Currently we are facing issues with the Object Detection app installation on Windows and Linux CI.',
-            );
+            test.skip(appName === 'Object Detection', 'Object detection app has no service');
+
+            const modelServicePage = await aiLabPage.navigationBar.openServices();
+            const serviceDetailsPage = await modelServicePage.openServiceDetails(appName);
+
+            await playExpect
+              // eslint-disable-next-line sonarjs/no-nested-functions
+              .poll(async () => await serviceDetailsPage.getServiceState(), { timeout: 60_000 })
+              .toBe('RUNNING');
+
+            const serviceType = await serviceDetailsPage.getServiceType();
+
+            if (AI_LAB_TESTS_WITH_GPU_ENABLED) {
+              playExpect(serviceType).toBe('GPU Inference');
+            } else {
+              playExpect(serviceType).toBe('CPU Inference');
+            }
+          });
+
+          test(`Service inference test for ${appName}`, async ({ request }) => {
+            test.setTimeout(600_000);
+            test.skip(appName === 'Object Detection', 'Object detection app has no service');
 
             let port: string = '';
             let baseUrl: string = '';
@@ -718,12 +736,6 @@ async function getModelServicePort(appModelName: string): Promise<string> {
   const modelServicePage = await aiLabPage.navigationBar.openServices();
   await modelServicePage.waitForLoad();
   const serviceDetailsPage = await modelServicePage.openServiceDetails(appModelName);
-
-  await playExpect
-    // eslint-disable-next-line sonarjs/no-nested-functions
-    .poll(async () => await serviceDetailsPage.getServiceState(), { timeout: 60_000 })
-    .toBe('RUNNING');
-
   return await serviceDetailsPage.getInferenceServerPort();
 }
 
