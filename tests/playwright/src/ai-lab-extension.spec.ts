@@ -484,7 +484,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
             test.skip(appName === 'Object Detection', 'Object detection app has no service');
 
             const modelServicePage = await aiLabPage.navigationBar.openServices();
-            const serviceDetailsPage = await modelServicePage.openServiceDetails(appName);
+            const serviceDetailsPage = await modelServicePage.openServiceDetails(appModel);
 
             await playExpect
               // eslint-disable-next-line sonarjs/no-nested-functions
