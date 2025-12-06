@@ -25,6 +25,7 @@ import { handleConfirmationDialog, podmanAILabExtension } from '@podman-desktop/
 export class AILabServiceDetailsPage extends AILabBasePage {
   readonly endpointURL: Locator;
   readonly inferenceServerType: Locator;
+  readonly backendInferenceType: Locator;
   readonly modelName: Locator;
   readonly codeSnippet: Locator;
   readonly deleteServiceButton: Locator;
@@ -35,6 +36,7 @@ export class AILabServiceDetailsPage extends AILabBasePage {
     super(page, webview, 'Service details');
     this.endpointURL = this.webview.getByLabel('Endpoint URL', { exact: true });
     this.inferenceServerType = this.webview.getByLabel('Inference Type', { exact: true });
+    this.backendInferenceType = this.webview.getByLabel('Service type', { exact: true });
     this.modelName = this.webview.getByLabel('Model name', { exact: true });
     this.codeSnippet = this.webview.getByLabel('Code Snippet', { exact: true });
     this.deleteServiceButton = this.webview.getByRole('button', { name: 'Delete service' });
@@ -72,5 +74,13 @@ export class AILabServiceDetailsPage extends AILabBasePage {
   async getServiceState(): Promise<string> {
     const serviceState = await this.webview.getByRole('status').getAttribute('title');
     return serviceState ?? 'UNKNOWN';
+  }
+
+  async getServiceType(): Promise<string> {
+    return (await this.inferenceServerType.textContent()) ?? '';
+  }
+
+  async getBackendInferenceType(): Promise<string> {
+    return (await this.backendInferenceType.textContent()) ?? '';
   }
 }
