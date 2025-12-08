@@ -494,9 +494,9 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
             const serviceType = await serviceDetailsPage.getServiceType();
 
             if (AI_LAB_TESTS_WITH_GPU_ENABLED) {
-              playExpect(serviceType).toBe('GPU Inference');
+              playExpect(serviceType.trim()).toBe('GPU Inference');
             } else {
-              playExpect(serviceType).toBe('CPU Inference');
+              playExpect(serviceType.trim()).toBe('CPU Inference');
             }
           });
 
