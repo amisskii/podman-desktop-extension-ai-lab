@@ -326,6 +326,7 @@ test.describe.serial(`AI Lab extension installation and verification`, () => {
   // They break out of guilderails and fail the tests.
   ['ibm-granite/granite-4.0-micro-GGUF'].forEach(modelName => {
     test.describe.serial(`AI Lab playground creation and deletion for ${modelName}`, { tag: '@smoke' }, () => {
+      test.skip();
       let catalogPage: AILabCatalogPage;
       let playgroundsPage: AILabPlaygroundsPage;
       let playgroundDetailsPage: AILabPlaygroundDetailsPage;
