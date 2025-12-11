@@ -16,7 +16,7 @@
 
 name: PD AI Lab E2E Nightly Testing Farm
 
-    
+on:   
   workflow_dispatch:
     inputs:
       podman_version:
