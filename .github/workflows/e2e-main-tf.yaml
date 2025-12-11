@@ -16,9 +16,6 @@
 
 name: PD AI Lab E2E Nightly Testing Farm
 
-on:
-  schedule:
-    - cron: '0 0 * * *'
     
   workflow_dispatch:
     inputs:
