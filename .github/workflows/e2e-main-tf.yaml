@@ -47,7 +47,6 @@ jobs:
   pd-ai-lab-e2e-testing-farm:
     name: pd-e2e-testing-farm-ci
     runs-on: ubuntu-latest
-    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
